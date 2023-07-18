@@ -17,7 +17,7 @@ def get_dw_engine():
         "db": "postgres",
         "username": "postgres",
         "pwd": "d4t4b3s&p0stgR3$",
-        "port": "5432"
+        "port": "5433"
     }
 
     dbcon_dw = DB_Connector(ds_con, credentials_dw)
@@ -55,7 +55,7 @@ def get_data_from_api():
 
     df_list = list()
     for i in range(1, 10):
-        response = requests.get(origin_url + f"{i}")
+        response = requests.get(origin_url + f"?id={i}")
         df_list.append(response.text)
 
     df = pd.DataFrame({
@@ -84,3 +84,15 @@ def get_data_from_parquet():
         df, "Stage_", "Categoria", engine_dw, "public")
 
     return inserted_dw
+
+
+def load_full_data():
+    insert_from_db = get_data_from_db()
+    insert_from_api = get_data_from_api()
+    insert_from_parquet = get_data_from_parquet()
+
+    return (insert_from_db, insert_from_api, insert_from_parquet)
+
+
+if __name__ == "__main__":
+    load_full_data()
